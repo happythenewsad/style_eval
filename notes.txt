@@ -1,0 +1,3 @@
+things to try: 
+  find average and std sent length's of style a,b
+  obviously this may be a low value metric across styles where one isn't compact
