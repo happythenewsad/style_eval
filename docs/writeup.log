@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  15 AUG 2018 00:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  15 AUG 2018 00:53
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -176,8 +176,21 @@ Overfull \hbox (192.43234pt too wide) in paragraph at lines 161--172
  [] 
  []
 
-Missing character: There is no Ã in font ptmr7t!
-Missing character: There is no ’ in font ptmr7t!
+
+Underfull \hbox (badness 10000) in paragraph at lines 199--202
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 204--206
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 207--209
+
+ []
+
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -208,7 +221,7 @@ usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/
 texlive/2016/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2
 016/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2016/texmf-
 dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on writeup.pdf (2 pages, 95712 bytes).
+Output written on writeup.pdf (2 pages, 96172 bytes).
 PDF statistics:
  48 PDF objects out of 1000 (max. 8388607)
  34 compressed objects within 1 object stream

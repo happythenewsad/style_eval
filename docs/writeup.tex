@@ -183,7 +183,7 @@ We experimented with a variety of models. However, the choice of experiments was
 
 \subsection{Models}
 Models employed:
-logistic regression
+logistic regression\\
 SVM
 
 
@@ -196,10 +196,19 @@ Features created:
 We used grid search to find successful combinations of engineered features.
   
 \section{Results}
-
+  include examples of type 1 and type 2 errors\\
+  include accuracy of best model\\
+  include statement of features used.\\
 \section{Analysis}
   \subsection{Corpora}
     Parallel, sentence aligned Shakespeare dataset. original + cliffnotes. [Coco xu]
+    Analysis of bleu score:\\
+
+    style1 vs style2 averaged bleu: 44 \\
+randomized:.0175 \\
+
+  BLEU scores range from 0 to 1. We can see from the differences of intra-style vs inter-style blue scores that BLEU certainly contains some signal. Unfortunately, since our labels of styles are binary, it is difficult to investigate this further and determine whether or not inter-style BLEU scores correlate smoothly/monotonically with inter-style change.
+
   \subsection{Error analysis}
   \subsection{Acknowledged shortcomings}
   assumption of evenly distributed class (style) priors
@@ -233,13 +242,11 @@ expand approach to handle passages larger than sentences
 
 ...
 
-\section*{ACKNOWLEDGMENT}
 
-...
 
 \begin{thebibliography}{99}
 
-\bibitem{c1} G. O. Young, ÒSynthetic structure of industrial plastics (Book style with paper title 
+\bibitem{c1} example of bib item 
 
 \end{thebibliography}
 
