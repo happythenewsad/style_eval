@@ -232,13 +232,13 @@ Multinomial Naive Bayes:
     [TODO]
     include accuracy of best model\\
     include statement of features used in best model.\\
-    %[TODO: insert final scores graph]
+    TODO: insert final scores graph
   \section{Analysis}
-    Since this is an evaluation metric, it's important to strive for a non-binary, classifier-type metric so that the metric will yield maximal information about input.\\
+    Since this is an evaluation metric, it's important to strive for a non-binary output that closely tracks gold scoring along the entire range of possible values (i.e. 0 to 1)..\\
     Our best model, Multinomial Naive bayes with (XXX features) underperformed our intuition-driven expectations.
 
   \subsection{Corpora}
-    Parallel, sentence aligned Shakespeare dataset. original + cliffnotes. [Coco xu]
+    Parallel, sentence aligned Shakespeare dataset. original + cliffnotes. [Coco xu] \\
     Analysis of bleu score:\\
 
 
@@ -247,13 +247,13 @@ Multinomial Naive Bayes:
   [Include explanation of why Multinomial naive bayes performed best. Probably should include both Brier loss and zero-one loss]
 
   \subsection{Error analysis}
-      [TODO: add discussion of validation-set vs. test-set error difference (overfitting)]
-      F1 score not sensible for multiclass, dynamic class problem like this, so did not use..\\
-      accuracy would provide some judgment of a hypothetical model, but we want weightings/confidence levels signalled as well. Brier addresses this issue to some extent.
+      TODO: add discussion of validation-set vs. test-set error difference (overfitting)\\
+      TODO: add and analyze example of both AB and BA misprediction\\ \\
+      F1 score not sensible for multiclass, dynamic class problem like this, so did not use..\\ \\
 
       Additional parallel corpora (from authors besides Shakespeare) with scalar rather than binary gold labels would undoubtedly guide use towards a better performing evaluator. Unfortunately, these parallel style corpora are virtually nonexistent.
-      \\
-      Cherry-picking intuition-guided features to engineer adds a subjective element to our evaluator, which is responsible for loss in accuracy, to a degree that is difficult to measure precisely. Doubtless additional features exist that would improve accuracy.
+      \\ \\
+      Cherry-picking intuition-guided features to engineer adds a subjective element to our evaluator, which is responsible for loss in accuracy, to a degree that is difficult to measure precisely. Doubtless, additional features exist that would improve accuracy.
   \subsection{Acknowledged shortcomings}
   Assumption of evenly distributed class (style) priors. This is not a portable assumption. \\ \\The way forward will be to either prove evaluator success with heuristically seeded priors, or require the injection of class priors from each project's dataset. \\ \\
 We only used one dataset, the Shakespeare dataset. It is simplistic to assume that Sparknotes data resembles a single human author's. It probably resembles other business objectives, like truncation.
