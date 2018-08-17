@@ -125,7 +125,6 @@ Metric: label accuracy. Method: External sentiment clasifiers.
 
   The evaluation metric E($x_{AB}^i$, $R_{AB}^i, y_i$) will output a score. [TODO: remove $y_i$ ?] A successful metric E will output a score $\hat{y}$, where $|y-\hat{y}|$ is minimized. Some variations on this loss function are detailed later (TODO: reference Brier score).
   \subsection{Desired Evaluation metric traits}
-      [TODO: expand on each item]
       After reviewing the pros and cons of various evaluation metrics in the current literature, we distilled four desirable traits in an evaluation metric.
     \begin{itemize}
 
@@ -136,20 +135,20 @@ Metric: label accuracy. Method: External sentiment clasifiers.
       \item If $E()$ evaluates content in addition to style, it should do so independently
       We quickly realized that an improvement on the existing metrics required an ensemble of multiple submetrics.
     \end{itemize}
-  \subsection{Discussion of available paths} 
+  \subsection{Discussion of exploratory paths} 
   With these traits in mind, we avoided including neural network, or other 'black box' classifiers in our evaluator. Instead, we focused on simple linear classifiers with intuitive engineered features. 
 
 
 \section{Experiment setup}
   
   \subsection{Data}
-
-  All aligned sentences from the Shakespeare dataset were used, from the following plays: 'othello', 'antony-and-cleopatra', 'asyoulikeit', 
+  Experimental data was draw from Coco Xu's Shakespeare dataset. This dataset is drawn from two distinct sources: Shakespeare's original play scripts, and Sparknote's modernized versions. Sentences are aligned, so that the same sentence may be accessed simultaneously in both styles.
+  All aligned sentences from the Shakespeare dataset were used, from the following plays:\\ \\ 'othello', 'antony-and-cleopatra', 'asyoulikeit', 
                        'errors', 'hamlet', 'henryv', 'juliuscaesar', 'lear', 'macbeth', 
                        'merchant', 'msnd', 'muchado', 'richardiii', 'romeojuliet', 
                        'shrew', 'tempest', 'twelfthnight'
 \\ \\
-  42,000 parallel sentences: original and sparknotes version.
+  42,000 parallel sentences in total.
 \\
   The topics encompass a wide variety of content and sentiment: comedies, tragedies, histories, although it is important to note that they are all written in the screenplay format. While this is an amazing corpus to work with, there are some natural limitations.
 
@@ -177,7 +176,7 @@ Metric: label accuracy. Method: External sentiment clasifiers.
 
 The original sentences were automatically assigned a "class 1" label, and the sparknotes sentences a "class 2" label, this generating a classical supervised learning dataset with "gold" labels.
 
-This dataset was randomly shuffled. 70pct of corpus was designated the train set, 20pct the validation set, and 10pct the holdout test set.
+This dataset was randomly shuffled by sentence pair, preserving style-to-style alignments. 70pct of corpus was designated the train set, 20pct the validation set, and 10pct the holdout test set.
  
 We experimented with a variety of models. However, the choice of experiments was guided by our evaluator design ideals [see prev section].
 
@@ -229,10 +228,22 @@ Multinomial Naive Bayes:
     [TODO: expound on grid search methodology]
 
   \section{Results}
-    [TODO]
-    include accuracy of best model\\
-    include statement of features used in best model.\\
-    TODO: insert final scores graph
+    \begin{table}[h]
+      \caption{Model Performance}
+      \label{table_example}
+      \begin{center}
+        \begin{tabular}{| p{2cm}  | p{2cm} | | p{2cm} }
+        \hline
+        Model & Validation Brier Score & Test-set Accuracy\\
+        \hline
+        MNB w/ Bleu, POS features & .2924 & 51.5\%\\
+
+        \hline
+        \end{tabular}
+      \end{center}
+    \end{table}
+
+    TODO: insert table with final scores
   \section{Analysis}
     Since this is an evaluation metric, it's important to strive for a non-binary output that closely tracks gold scoring along the entire range of possible values (i.e. 0 to 1)..\\
     Our best model, Multinomial Naive bayes with (XXX features) underperformed our intuition-driven expectations.
