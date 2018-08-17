@@ -52,7 +52,7 @@ Evaluating Style Transfer
 %         Dayton, OH 45435, USA
 %         {\tt\small p.misra at ieee.org}}%
 % }
-
+\usepackage{textcomp}
 
 \begin{document}
 
@@ -66,7 +66,7 @@ Evaluating Style Transfer
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-This project formalizes the problem of evaluation of style transfer and explores improves on the state of the art metrics.
+This project formalizes the problem of evaluation of monolingual sequence to sequence style transfer models and explores improvements on the state of the art metrics.
 
 \end{abstract}
 
@@ -82,7 +82,7 @@ Style identification is the identification of style in a text passage by an auto
 The existing literature on style transfer uses a combination of BLEU scores, perplexity [Ficler], black box neural classifiers, and manual labeling to evaluation the quality of a transfer. Each of these has serious problems (see SECTION)
 
 
-This paper’s objectives are three-fold:
+This paper\textquotesingle s objectives are three-fold:
 \begin{itemize}
     \item Identify characteristics desirable in a style transfer evaluation metric
     \item Formalize the evaluation objective
@@ -90,7 +90,6 @@ This paper’s objectives are three-fold:
 \end{itemize}
           
 
-          
 \section{Related work}
 
 There is active research in style transfer. Ficler uses fixed, human- intelligable stylistic parameters like ’length’ and ’sentiment’, which can be extracted from specific training data with heuristics. They use perplexity as an evaluation metric.
@@ -107,11 +106,11 @@ Metric: label accuracy. Method: External sentiment clasifiers.
 [Prabhumoye]'s proposed model creates a style-agnostic representation of an English input sentence using A->B then B->A neural machine translators, with the objective of style transfer with minimal semantic drift. A style-specific transformation step adds specific style to the style-agnostic representation. This paper confirms that BLEU and ROUGE metrics are not suitable for capturing meaning.
 
 \section{Criticism of state of the art metrics}
-[TO EXPAND ON]
+[TODO: expand on each bullet below]
 \begin{itemize}
-  \item Terrible accuracy (perplexity
+  \item Terrible accuracy (perplexity)
   \item Easily fooled (bleu)
-  \item Low explainability (neural models)
+  \item low explanatory power (neural models). [TODO: mention work in developing neural model explanatory power.]
   \item Intractible (manual)
 \end{itemize}
 
@@ -124,55 +123,56 @@ Metric: label accuracy. Method: External sentiment clasifiers.
       \item a reference sentence and score pair $R_{AB}^i ; y_i$ that is scored in a range of $[0,1]$ by a trusted external source
     \end{itemize}
 
-  The evaluation metric E($x_{AB}^i$, $R_{AB}^i, y_i$) will output a score. A successful metric E will output a score $\hat{y}$, where $|y-\hat{y}|$ is minimized.
+  The evaluation metric E($x_{AB}^i$, $R_{AB}^i, y_i$) will output a score. [TODO: remove $y_i$ ?] A successful metric E will output a score $\hat{y}$, where $|y-\hat{y}|$ is minimized. Some variations on this loss function are detailed later (TODO: reference Brier score).
   \subsection{Desired Evaluation metric traits}
+      [TODO: expand on each item]
+      After reviewing the pros and cons of various evaluation metrics in the current literature, we distilled four desirable traits in an evaluation metric.
     \begin{itemize}
-      [TO EXPAND ON]
-      \item intuitive
-      \item linear in the input to $E()$
-      \item relies only on $X$, $R$, $Y$
-      \item if it evaluates content in addition to style, it should do so independently
+
+      \item The ideal metric $E()$ should be accurate. More precisely, it should track ground truth values closely. When the ground truth score for $x_{AB}^i$ is low, E($x_{AB}^i$, $R_{AB}^i, y_i$) should also be low. Likewise for high ground truth scores.
+      \item $E()$ should be intuitive. It is common for research tasks to use [TODO: add reference] LSTM classifiers to evaluate style transfer (when, of course, human scores are not sufficiently available). While some of these neural classifiers achieve reasonable accuracy, their explanatory power is quite low. Humans cannot easily draw intuitions from the weight matrices of neural layers.
+      \item $E()$ speed should be reasonable. We define this having a run time that is linear in the input data.
+      \item $E()$ relies only on $X$, $R$, $Y$. This allows $E()$ to be portable between experiments and corpora.
+      \item If $E()$ evaluates content in addition to style, it should do so independently
+      We quickly realized that an improvement on the existing metrics required an ensemble of multiple submetrics.
     \end{itemize}
-  \subsection{discussion of available paths} 
-  neural: pros and cons\\
-  human engineered features: pros and cons\\
-  \subsection{Chosen path}
-  human engineered features: include reasoning
-  
+  \subsection{Discussion of available paths} 
+  With these traits in mind, we avoided including neural network, or other 'black box' classifiers in our evaluator. Instead, we focused on simple linear classifiers with intuitive engineered features. 
+
+
 \section{Experiment setup}
-\subsection{Data}
+  
+  \subsection{Data}
 
-All aligned sentences from the Shakespeare dataset were used, from the following plays: 'othello', 'antony-and-cleopatra', 'asyoulikeit', 
-                     'errors', 'hamlet', 'henryv', 'juliuscaesar', 'lear', 'macbeth', 
-                     'merchant', 'msnd', 'muchado', 'richardiii', 'romeojuliet', 
-                     'shrew', 'tempest', 'twelfthnight'
+  All aligned sentences from the Shakespeare dataset were used, from the following plays: 'othello', 'antony-and-cleopatra', 'asyoulikeit', 
+                       'errors', 'hamlet', 'henryv', 'juliuscaesar', 'lear', 'macbeth', 
+                       'merchant', 'msnd', 'muchado', 'richardiii', 'romeojuliet', 
+                       'shrew', 'tempest', 'twelfthnight'
+\\ \\
+  42,000 parallel sentences: original and sparknotes version.
+\\
+  The topics encompass a wide variety of content and sentiment: comedies, tragedies, histories, although it is important to note that they are all written in the screenplay format. While this is an amazing corpus to work with, there are some natural limitations.
 
-42,000 parallel sentences: original and sparknotes version.
-
-The topics encompass a wide variety of content and sentiment: comedies, tragedies, histories, although it is important to note that they are all written in the screenplay format. While this is an amazing corpus to work with, there are some natural limitations.
-
-Here are some examples of parallel aligned sentences. As you can see, differences in percieved style can vary significantly from passage to passage (original style on the left):
-
-
-\begin{table}[h]
-  \caption{Aligned Text Examples}
-  \label{table_example}
-  \begin{center}
-    \begin{tabular}{| p{3.5cm}  | p{3.5cm} |}
-    \hline
-    What's the matter, lieutenant? & What's the matter, lieutenant?\\
-    \hline
-    Tell me this, I pray: Where have you left the money that I gave you? & Answer me this, please: where's the money I gave you?\\
-    \hline
-    Lucius, who's that knocking? & Lucius, who's that knocking?\\
-    \hline
-    Gentlemen, forward to the bridal dinner. & Gentlemen, on to the bridal dinner.\\
-    \hline
-    \end{tabular}
-  \end{center}
-\end{table}
+  Here are some examples of parallel aligned sentences. As you can see, differences in percieved style can vary significantly from passage to passage (original style on the left):
 
 
+  \begin{table}[h]
+    \caption{Aligned Text Examples}
+    \label{table_example}
+    \begin{center}
+      \begin{tabular}{| p{3.5cm}  | p{3.5cm} |}
+      \hline
+      What's the matter, lieutenant? & What's the matter, lieutenant?\\
+      \hline
+      Tell me this, I pray: Where have you left the money that I gave you? & Answer me this, please: where's the money I gave you?\\
+      \hline
+      Lucius, who's that knocking? & Lucius, who's that knocking?\\
+      \hline
+      Gentlemen, forward to the bridal dinner. & Gentlemen, on to the bridal dinner.\\
+      \hline
+      \end{tabular}
+    \end{center}
+  \end{table}
 
 
 The original sentences were automatically assigned a "class 1" label, and the sparknotes sentences a "class 2" label, this generating a classical supervised learning dataset with "gold" labels.
@@ -181,71 +181,91 @@ This dataset was randomly shuffled. 70pct of corpus was designated the train set
  
 We experimented with a variety of models. However, the choice of experiments was guided by our evaluator design ideals [see prev section].
 
-[spacy POS tagger]. fortunately quite good, even on the relatively ancient shakespearean corpus (train on default web corpora distribution). example:
+We used 28 [TODO: update number] features, including:
+sentence length, bleu score, counts of all major parts of speech, counts of all major punctuations, and adv-verb and adj-noun ratios. 
 
-Go bid the priests do present sacrifice And bring me their opinions of success\\
+\subsection{NER and BLEU score exploration}
+We attempted to use NER scores as well, but found that they provided almost no predictive power [TODO: expound?] even between content-aligned inter-style sentence pairs. And of course, using NER in a non-aligned context reduces portability. Furthermore, NER, even if configured to yield predictive power, adds a distracting content signal into the evaluator, violating one of our ideal traits.
+\\ \\
+We knew that BLEU scores, while incomplete on their own, provided a useful style (and not merely content) signal, because of this exploratory experiment:
+\\
+We took a single play ("Othello"), and summed the difference the differences in BLEU scores of randomly paired intra-style sentence pairs. This yielded a normalized score of .44 [TODO: update score]
 
-Go VERB    
-bid VERB   
-the DET   
-priests NOUN 
-do  VERB   
-present ADJ  
-sacrifice
-And CCONJ 
-bring VERB  
-me  PRON   
-their ADJ    
-opinions  NOUN  
-of  ADP    
-success NOUN 
+Then we performed the same procedure, except that summed BLEU score differences between randomly paired inter-style sentence pairs. this yielded a normalized score of .17 [TODO: update score]
+\\
+\\
+POS features were generated by the Spacy POS tagger, trained on a standard web corpus. We found the tagger to be quite accurate, even on the relatively ancient shakespearean corpus. tagging example:\\
+\\
+"Go bid the priests do present sacrifice And bring me their opinions of success"\\
+
+Go VERB  \\  
+bid VERB  \\ 
+the DET   \\
+priests NOUN \\
+do  VERB   \\
+present ADJ  \\
+sacrifice\\
+And CCONJ \\
+bring VERB  \\
+me  PRON   \\
+their ADJ    \\
+opinions  NOUN  \\
+of  ADP    \\
+success NOUN \\
 
 
 \subsection{Models}
-That had linear predictive power, as opposed to binary classification. 
+We reviewed linear models that had good classification ability as well as the ability to output probability distributions of class predictions, rather than just the binary predictions.
+
 
 Models employed:
-logistic regression\\
-SVM
+SVM [TODO: expound]\\ \\
+logistic regression [TODO: expound]\\ \\
+Multinomial Naive Bayes:
+  has the ability to predict probabilities, which, while less helpful given our binary labeled data set, would be quite helpful in further verification of the evaluator for a future, ranged labeled dataset. With this in mind, we made the assumption that our binary training data labels were actually 100pct-weighted probability values. We then used Brier, a normalizad form of SSE, as our loss function during evaluation (see Results).
 
 
+  \subsection{grid search}
+    [TODO: expound on grid search methodology]
 
+  \section{Results}
+    [TODO]
+    include accuracy of best model\\
+    include statement of features used in best model.\\
+    %[TODO: insert final scores graph]
+  \section{Analysis}
+    Since this is an evaluation metric, it's important to strive for a non-binary, classifier-type metric so that the metric will yield maximal information about input.\\
+    Our best model, Multinomial Naive bayes with (XXX features) underperformed our intuition-driven expectations.
 
-\subsection{feature engineering}
-Features created:
-guided by intuition, Strunk and white
-
-We used grid search to find successful combinations of engineered features.
-  
-\section{Results}
-  include examples of type 1 and type 2 errors\\
-  include accuracy of best model\\
-  include statement of features used.\\
-\section{Analysis}
-  since this is an evaluation metric, it's important to strive for a non-binary, classifier-type metric so that the metric will yield maximal information about input.
   \subsection{Corpora}
     Parallel, sentence aligned Shakespeare dataset. original + cliffnotes. [Coco xu]
     Analysis of bleu score:\\
 
-    style1 vs style2 averaged bleu: 44 \\
-randomized:.0175 \\
 
   BLEU scores range from 0 to 1. We can see from the differences of intra-style vs inter-style blue scores that BLEU certainly contains some signal. Unfortunately, since our labels of styles are binary, it is difficult to investigate this further and determine whether or not inter-style BLEU scores correlate smoothly/monotonically with inter-style change.
 
+  [Include explanation of why Multinomial naive bayes performed best. Probably should include both Brier loss and zero-one loss]
+
   \subsection{Error analysis}
-      softmax\\
-      f1 score not sensible for multiclass, dynamic class problem like this.\\
-      accuracy would provide some judgment of a hypothetical model, but we want weightings/confidence levels signalled as well.
+      [TODO: add discussion of validation-set vs. test-set error difference (overfitting)]
+      F1 score not sensible for multiclass, dynamic class problem like this, so did not use..\\
+      accuracy would provide some judgment of a hypothetical model, but we want weightings/confidence levels signalled as well. Brier addresses this issue to some extent.
+
+      Additional parallel corpora (from authors besides Shakespeare) with scalar rather than binary gold labels would undoubtedly guide use towards a better performing evaluator. Unfortunately, these parallel style corpora are virtually nonexistent.
+      \\
+      Cherry-picking intuition-guided features to engineer adds a subjective element to our evaluator, which is responsible for loss in accuracy, to a degree that is difficult to measure precisely. Doubtless additional features exist that would improve accuracy.
   \subsection{Acknowledged shortcomings}
-  assumption of evenly distributed class (style) priors
-One dataset, where part of the stated task of style B was shortening.
+  Assumption of evenly distributed class (style) priors. This is not a portable assumption. \\ \\The way forward will be to either prove evaluator success with heuristically seeded priors, or require the injection of class priors from each project's dataset. \\ \\
+We only used one dataset, the Shakespeare dataset. It is simplistic to assume that Sparknotes data resembles a single human author's. It probably resembles other business objectives, like truncation.
 
 \section{Future work}
-expand approach to handle passages larger than sentences\\
+[TODO: expand]
+Expand approach to handle passages larger than single sentences\\
 What is the class prior for a style? Can we pick a meaningful value?\\
+
 How do we deal with fluidity and overlapping between styles, or shifting style boundaries?\\
-Style-author hypothesis:
-  That an author always writes in the same style
+
+We assumed Style-author hypothesis: That an author always writes in the same style. This is probably not always the case. Do we tackle this issue by including author identification as a sub-metric in a future evaluator?
 
 
 ...
@@ -277,6 +297,13 @@ Style-author hypothesis:
 
 \begin{thebibliography}{99}
 
+\bibitem{c1} example of bib item 
+\bibitem{c1} example of bib item 
+\bibitem{c1} example of bib item 
+\bibitem{c1} example of bib item 
+\bibitem{c1} example of bib item 
+\bibitem{c1} example of bib item 
+\bibitem{c1} example of bib item 
 \bibitem{c1} example of bib item 
 
 \end{thebibliography}
