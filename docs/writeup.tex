@@ -181,7 +181,29 @@ This dataset was randomly shuffled. 70pct of corpus was designated the train set
  
 We experimented with a variety of models. However, the choice of experiments was guided by our evaluator design ideals [see prev section].
 
+[spacy POS tagger]. fortunately quite good, even on the relatively ancient shakespearean corpus (train on default web corpora distribution). example:
+
+Go bid the priests do present sacrifice And bring me their opinions of success\\
+
+Go VERB    
+bid VERB   
+the DET   
+priests NOUN 
+do  VERB   
+present ADJ  
+sacrifice
+And CCONJ 
+bring VERB  
+me  PRON   
+their ADJ    
+opinions  NOUN  
+of  ADP    
+success NOUN 
+
+
 \subsection{Models}
+That had linear predictive power, as opposed to binary classification. 
+
 Models employed:
 logistic regression\\
 SVM
@@ -191,7 +213,7 @@ SVM
 
 \subsection{feature engineering}
 Features created:
-
+guided by intuition, Strunk and white
 
 We used grid search to find successful combinations of engineered features.
   
@@ -211,12 +233,20 @@ randomized:.0175 \\
   BLEU scores range from 0 to 1. We can see from the differences of intra-style vs inter-style blue scores that BLEU certainly contains some signal. Unfortunately, since our labels of styles are binary, it is difficult to investigate this further and determine whether or not inter-style BLEU scores correlate smoothly/monotonically with inter-style change.
 
   \subsection{Error analysis}
+      softmax\\
+      f1 score not sensible for multiclass, dynamic class problem like this.\\
+      accuracy would provide some judgment of a hypothetical model, but we want weightings/confidence levels signalled as well.
   \subsection{Acknowledged shortcomings}
   assumption of evenly distributed class (style) priors
 One dataset, where part of the stated task of style B was shortening.
 
 \section{Future work}
-expand approach to handle passages larger than sentences
+expand approach to handle passages larger than sentences\\
+What is the class prior for a style? Can we pick a meaningful value?\\
+How do we deal with fluidity and overlapping between styles, or shifting style boundaries?\\
+Style-author hypothesis:
+  That an author always writes in the same style
+
 
 ...
 \section{Conclusions}
