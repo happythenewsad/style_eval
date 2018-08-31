@@ -3,3 +3,4 @@ data
 docs/writeup.aux
 docs/writeup.log
 docs/writeup.synctex.gz
+*.pickle
