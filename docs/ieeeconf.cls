@@ -3919,8 +3919,9 @@ which is provided to fool Hyperref.}}
 % idea to let LaTeX have quite this much rubber.
 \if@confmode%
 % IEEE wants section heading spacing to decrease for conference mode
-\def\section{\@startsection{section}{1}{\z@}{1.5ex plus 1.5ex minus 0.5ex}%
-{0.7ex plus 1ex minus 0ex}{\normalfont\normalsize\centering\scshape}}%
+\def\section{\@startsection{section}{1}{\z@}{5.5ex plus 1.5ex minus 0.5ex}%
+{2.7ex plus 1ex minus 0ex}{\normalfont\normalsize\centering\scshape}}%
+%PETER: first value in line above adjusts space below \section header
 \def\subsection{\@startsection{subsection}{2}{\z@}{1.5ex plus 1.5ex minus 0.5ex}%
 {0.7ex plus .5ex minus 0ex}{\normalfont\normalsize\itshape}}%
 \else % for journals
