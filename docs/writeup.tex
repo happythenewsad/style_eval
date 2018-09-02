@@ -64,21 +64,13 @@ Evaluating Style Transfer
 \thispagestyle{empty}
 \pagestyle{empty}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
 This project formalizes the problem of evaluation of monolingual sequence to sequence style transfer models and explores improvements on the state of the art metrics.
 
 \end{abstract}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 \section{Introduction}
-                
-        
 Style identification is the identification of style in a text passage by an automated process, often a language model. Generative models can generate text in one or more styles, given content and style parameters. Style identification has proven utility in applications like author identification (Houvardas). Yet, while much research has focused on semantic transfer from one human language to another, there has been little attention paid to intra-lingual style transfer. Intra-lingual style transfer affords many interesting applications: authorship obfuscation, text simplification, and style enhancement, to name a few.
 
 The existing literature on style transfer uses a combination of BLEU scores, perplexity [Ficler], black box neural classifiers, and manual labeling to evaluate the quality of a transfer. Each of these has serious problems (see Section 3)
@@ -89,9 +81,7 @@ This paper\textquotesingle s objectives are three-fold:
     \item Identify characteristics desirable in a style transfer evaluation metric
     \item Formalize the evaluation objective
     \item Explore a specific approach and discuss results
-\end{itemize}
-          
-
+\end{itemize} 
 \section{Related work}
 
 There is active research in style transfer. Ficler uses fixed, human- intelligable stylistic parameters like ’length’ and ’sentiment’, which can be extracted from specific training data with heuristics. They use perplexity as an evaluation metric.
@@ -101,7 +91,7 @@ There is active research in style transfer. Ficler uses fixed, human- intelligab
 \\ 
 
 [Hu] seeks to generate realistic (English) sentences using a VAE in a wake-sleep configuration. Semantic and stylistic signals can be injected to coerce specific meaning and styles.
-Outperforms stated previous work: a semi-supervised VAE (Kingma 2014). Hu reaches about 83pct sentiment classification accuracy, although performance varies greatly with datasets used. Hu's metric is label accuracy using external (i.e. blackbox) sentiment classifiers.
+Outperforms stated previous work: a semi-supervised VAE [Kingma 2014]. Hu reaches about 83pct sentiment classification accuracy, although performance varies greatly with datasets used. Hu's metric is label accuracy using external (i.e. blackbox) sentiment classifiers.
 \\ 
 
 [Prabhumoye]'s proposed model creates a style-agnostic representation of an English input sentence using A->B then B->A neural machine translators, with the objective of style transfer with minimal semantic drift. A style-specific transformation step adds specific style to the style-agnostic representation. This paper confirms that BLEU and ROUGE metrics are not suitable for capturing meaning.
@@ -127,6 +117,7 @@ In this section we comment on existing metrics used to evaluate style transfer (
   \\
   Candidate (B) will be heavily penalized because P(meal), P(was), P(A), and P(by) are all equal to zero.  The perplexity of (B) as compared with (A) will be high, since the metric accounts for specific words, not semantics or style. In contrast, perplexity will value (C)'s word overlap with (A), even though the overlapped words "ate" and "cheeseburger" are attached to different subjects.
   \\
+  \\
   For the same reasons, the BLEU score is incorrectly penalizes candidates that express the same style and concepts, but with different words. \\
 
   \item{Neural Models}\\ As mentioned in Section 2, neural net classifiers are heavily used in sequence to sequence evaluation (including in style transfer), but they suffer poor explanatory power due to their composition of usually immense weight vectors that are not individually attached to human intelligable concepts. [Li, et al.] and others have attacked this problem with some success. However, achievements are still modest and tend to explain predictions row-by-row, rather than explaining the classifier as a whole. \\
@@ -150,7 +141,7 @@ In this section we comment on existing metrics used to evaluate style transfer (
     \begin{itemize}
 
       \item The ideal metric $E()$ should be accurate. More precisely, it should track ground truth values closely. When the ground truth score for $x_{AB}^i$ is low, E($x_{AB}^i$, $R_{AB}^i, y_i$) should also be low. Likewise for high ground truth scores.
-      \item $E()$ should be intuitive. It is common for research tasks to use [TODO: add reference] LSTM classifiers to evaluate style transfer (when, of course, human scores are not sufficiently available). While some of these neural classifiers achieve reasonable accuracy, their explanatory power is quite low. Humans cannot easily draw intuitions from the weight matrices of neural layers.
+      \item $E()$ should be intuitive. It is common for research tasks to use LSTM classifiers [Fu, et al., Hu, et al., Prabhumoye] to evaluate style transfer (when, of course, human scores are not sufficiently available). While some of these neural classifiers achieve reasonable accuracy, their explanatory power is quite low. Humans cannot easily draw intuitions from the weight matrices of neural layers.
       \item $E()$ speed should be reasonable. We define this having a run time that is linear in the input data.
       \item $E()$ relies only on $X$, $R$, $Y$. This allows $E()$ to be portable between experiments and corpora.
       \item If $E()$ evaluates content in addition to style, it should do so independently
@@ -303,13 +294,14 @@ We reviewed linear classification models that had good classification ability as
  
 
   \section{Results}
+    TODO: handle table drift here
     \begin{table}[h]
       \caption{Model Performance}
       \label{table_example}
       \begin{center}
         \begin{tabular}{| p{2cm}  | p{2cm} | | p{2cm} }
         \hline
-        Model & Validation Brier Score & Test-set Accuracy\\
+        Model & Validation Accuracy & Test set Accuracy\\
         \hline
         SVM, all features, all plays & .614 & .696\\
         \hline
@@ -327,9 +319,11 @@ We reviewed linear classification models that had good classification ability as
   Evaluators should be quite accurate if they are to judge other models. Unfortunately, at 60pct accuracy we consider this evaluator a failure. \\
   \\
   It's worth noting that the evaluator made most of it's mistakes in misidentifying 'modern' sentences as 'original'.
-
+  \\
+  \\
   \includegraphics[scale=.5]{confmat.png}
-
+  \\
+  \\
   Without additional parallel style data, it is difficult to anticipate how the model will perform on non-Shakespearean datasets.
 
   We estimate that a significant amount of accuracy loss is attibutable to the binary nature of the dataset gold labels. Additional parallel corpora (from authors besides Shakespeare) with scalar rather than binary gold labels would undoubtedly guide use towards a better performing evaluator. Unfortunately, these parallel style corpora are virtually nonexistent.
@@ -351,16 +345,20 @@ We only used one dataset, the Shakespeare dataset. It is simplistic to assume th
 \\
 \\
   We assumed that each style's class prior probability was 50pct for the multinomial Naive Bayes models. While this was true of our dataset, it of course does not always hold. Future models with unknown class priors will have to account for this fact, perhaps by using stochastic priors.
+
 \section{Future work}
-[TODO: expand]
-Expand approach to handle passages larger than single sentences\\
+There are opportunities to extend this work in many different directions. We enumerate below the opportunities that we feel will be most fruitful. \\
+%How do we deal with fluidity and overlapping between styles, or shifting style boundaries?\\
 
-How do we deal with fluidity and overlapping between styles, or shifting style boundaries?\\
+\begin{itemize}
+  \item We formulated the evaluation problem with the assumption that the evaluator can accept any style transfer model $M_{AB}$ between any two styles. Scope and dataset contraints limited us to only two styles. We set up our experiment with a multi-class extension in mind. All models and programs can be used for multiclass prediction. However, until we actually run the evaluator on multiple classes of styles, we risk overfitting our evaluator on only two styles. \\
+  \item
+  We assumed the "style-author" hypothesis: That any given author always writes in the same style. This is certainly not always the case - counterexamples are legion. An extension to the experimental setup would be to use unsupervised clustering techniques to identify stylistic drift within an author's oeuvre before using his/her data as training data. If stylistic drift is found to be common and significant, it may be necessary to programmatically differentiate multile styles within an oeuvre.\\
+  \item 
+  Related to the above extension, using a black box author intentification system as a submetric for the evaluator may boost evaluator performance.\\
+  \item Gain in evaluator perfomance may be found when using larger-than-sentence sequences. Most known work in style transfer occurs at the sentence level. Intuitively, stylistic signal should be attainable from larger sequences. For example, irony may only be detected in a sentence because of context from an earlier sentence.
+\end{itemize}
 
-We assumed Style-author hypothesis: That an author always writes in the same style. This is probably not always the case. Do we tackle this issue by including author identification as a sub-metric in a future evaluator?
-
-
-...
 \section{Conclusions}
 We hope that we have motivated the need for a better style transfer metric, and that our problem formalization will be helpful in future work. Unfortunately, our strategy of maximizing explanatory power through human-intelligible engineering features resulted in disappointing accuracy results in our best performing model, a Support Vector Machine classifier.
 
@@ -397,6 +395,9 @@ We hope that we have motivated the need for a better style transfer metric, and 
 \bibitem{c1} Overview of the Author Obfuscation Task at PAN 2018: A New Approach to Measuring Safety. Potthast, et al. \url{http://ceur-ws.org/Vol-2125/invited_paper_16.pdf}
 \bibitem{c1} Style Transfer Through Back-Translation. Prabhumoye, et al. \url{https://arxiv.org/abs/1804.09000}
 \bibitem{c1} Authorship Identification Using a Reduced Set of Linguistic Features. Ruseti, et al. \url{https://www.uni-weimar.de/medien/webis/events/pan-12/pan12-papers-final/pan12-author-identification/ruseti12-notebook.pdf}
+\bibitem{c1} Auto-Encoding Variational Bayes. Kingma, et al. \url{https://arxiv.org/abs/1312.6114}
+
+
 
 
 \end{thebibliography}
