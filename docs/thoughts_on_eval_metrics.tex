@@ -1,0 +1,42 @@
+
+\documentclass[12pt]{article}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\parindent}{0in}
+\setlength{\parskip}{\baselineskip}
+
+\usepackage{amsmath,amsfonts,amssymb}
+
+\begin{document}
+
+\section{Evaluation schema}
+
+	Given:
+	\begin{itemize}
+		\item a style transfer model $M_{AB}$ that attempts to transfer an input sentence in style A to style B
+		\item a candidate output sentence from $M_{AB}$:  $x_{AB}^i$
+		\item a reference sentence and score pair $R_{AB}^i ; y_i$ that is scored in a range of $[0,1]$ by a trusted external source
+	\end{itemize}
+
+	The evaluation metric E($x_{AB}^i$, $R_{AB}^i, y_i$) will output a score. A successful metric E will output a score $\hat{y}$, where $|y-\hat{y}|$ is minimized.
+
+
+
+
+\section{Desired attributes of an evaluation metric}
+	\begin{itemize}
+		\item intuitive
+		\item linear in the input to $E()$
+		\item relies only on $X$, $R$, $Y$
+		\item if it evaluates content in addition to style, it should do so independently
+	\end{itemize}
+
+\end{document}
+
+
+
+
+
+
+
