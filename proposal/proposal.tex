@@ -1,0 +1,66 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+
+\begin{document}
+
+\begin{center}
+	\vspace{1em}
+  \LARGE\textbf{Research Proposal: Style Transfer Exploration}\\
+  \large\textit{Peter Kong}
+\end{center}
+
+\section{Problem Statement}
+Style identification is the identification of style in a text passage by an automated process, often a language model. Generative models can generate text in one or more styles, given content and style parameters. Style identification has proven utility in applications like author attribution (Houvardas). I intend to use it for an arguably more ambitious goal - to convincingly rewrite a textual passage into a new style.
+
+There is active research in style transfer. Ficler uses fixed, human-intelligable stylistic parameters like 'length' and 'sentiment', which can be extracted from specific training data with heuristics. They use perplexity as an evaluation metric.   
+
+In contrast, I plan to use an NN language model to learn stylistic parameters that aren't necessarily human-intelligible and are agnostic to the structure of training data. I plan to use Kabbara's proposal as a guide.
+
+\section{Objective}
+To coerce a passage of English input text to a certain author's style, retaining maximal semantic similarity.
+
+
+\section{Action Plan}
+\subsection{}
+Perform further literature review. The below steps may change accordingly.
+
+\subsection{}
+Acquire and structure training data. My focus on author-wise style and NN LMs' need for lots of training data indicate that using Project Gutenberg's text archive for authors with large oeuvres is a natural choice. Each oeuvre can be broken up into many passages and labeled programmatically.
+
+\subsection{}
+Implement Kabbara's proposal with a technique proposed by Ficler: inject a learned context tensor $c$ into various layers of a conditional NN learning model, effectively changing the model's sentence probability equation from:
+\\
+\\
+$\prod_{t=1}^n P(w_t|w_1,\ldots,w_{t-1})$ 
+\\
+\\
+to:
+\\
+\\
+$\prod_{t=1}^n P(w_t|w_1,\ldots,w_{t-1}, c)$ 
+\\
+\\
+This affords flexibility to easily add hand-engineered context as a method for further exploration. I will draw on (Cho, Bengio) for insight into particular RNN configurations to experiment with, including LSTM, grConv, and convolution RNNs.
+
+
+\subsection{}
+Evaluate model(s) using perplexity. For example, I would determine the perplexity of A and A', where A' is the output of the style transfer language model of input A.
+
+\subsection{(Reach goal / optional)}
+Explore alternative evaluation metrics. Style transfer assumes a high degree of semantic similarity between passages. Perplexity is a problmatic evaluation technique because it penalizes passages that contain different words, but are semantically similar. ROUGE and BLEU scoring have the same problem. Creating a new evaluation metric (or uncovering one in existing literature) would be beneficial. One evaluation metric I may explore is a weighted perplexity and entailment-match combination.
+
+\subsection{(Note on alternative plan)}
+Reducing sentences to lambda-calculus semantic representations (Zettlemoyer) and then expanding them back to full sentences in a new style seems like another promising approach, but is determined out of scope for this project.
+
+
+\section{Cited Sources}
+(Kabbara) "Stylistic Transfer in Natural Language Generation Systems Using Recurrent Neural Networks". Jad Kabbara and Jackie Chi Kit Cheung, 2016.\\ \\
+(Cho, Bengio) "On the Properties of Neural Machine Translation: Encoder-Decoder Approaches". Kyunghyun Cho, Yoshua Bengio, et al, 2014.\\ \\
+(Ficler) "Controlling Linguistic Style Aspects in Neural Language Generation". Jessica Ficler and Yoav Goldberg, 2017. \\ \\
+(Houvardas) "N-Gram Feature Selection for Authorship Identification". John Houvardas, 2006.\\ \\
+(Zettlemoyer) "Online Learning of Relaxed CCG Grammars for Parsing to Logical Form." Zettlemoyer, Collins, 2007.
+
+\end{document}  
