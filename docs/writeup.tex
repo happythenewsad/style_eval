@@ -66,15 +66,16 @@ Evaluating Style Transfer
 
 \begin{abstract}
 
-This project formalizes the problem of evaluation of monolingual sequence to sequence style transfer models and explores improvements on the state of the art evaluation metrics.
+This project formalizes the problem of evaluation of intra-lingual sequence to sequence style transfer models and explores improvements on the state of the art evaluation metrics.
 
 \end{abstract}
 
 \section{Introduction}
-Style identification is the identification of style in a text passage by an automated process, often a language model. Generative models can generate text in one or more styles, given content and style parameters. Style identification has proven utility in applications like author identification (Houvardas). Yet, while much research has focused on semantic transfer from one human language to another, there has been little attention paid to intra-lingual style transfer. Intra-lingual style transfer affords many interesting applications: authorship obfuscation, text simplification, and style enhancement, to name a few.
-
-The existing literature on style transfer uses a combination of BLEU scores, perplexity [Ficler], black box neural classifiers, and manual labeling to evaluate the quality of a transfer. Each of these has serious problems (see Section 3)
-
+Style transfer is the transfer of style in a text passage by an automated process, often a language model. Generative models can generate text in one or more styles, given content and style parameters. Style identification, a companion research problem, has proven utility in applications like author identification [Houvardas]. While much research has focused on semantic transfer from one human language to another, there has been little attention paid to intra-lingual style transfer. Intra-lingual style transfer affords many interesting applications: authorship obfuscation, text simplification, and style enhancement, to name a few.
+\\
+\\
+Validating a style transfer model requires an evaluation step. The existing literature on style transfer uses a combination of BLEU scores, perplexity [Ficler], black box neural classifiers, and manual labeling to evaluate the quality of a transfer. Each of these has serious problems (see Section III).
+\\
 
 This paper\textquotesingle s objectives are three-fold:
 \begin{itemize}
@@ -84,24 +85,25 @@ This paper\textquotesingle s objectives are three-fold:
 \end{itemize} 
 \section{Related work}
 
-There is active research in style transfer. Ficler uses fixed, human- intelligable stylistic parameters like ’length’ and ’sentiment’, which can be extracted from specific training data with heuristics. They use perplexity as an evaluation metric.
+There is active research in style transfer. [Ficler] uses fixed, human-intelligable stylistic parameters like ’length’ and ’sentiment’, which can be extracted from specific training data with heuristics. They use perplexity as an evaluation metric.
 \\ 
 
-[Fu, et al.] addresses the problem of learning style transfer without the use of parallel corpora, using style embeddings (a previous work) and an auto-encoder model with multiple decoders. Attempts are made to improve evaluation metrics, but they do not appear to improve on human judgment and black-box classifiers. Example outputs from models are hard to visualize/express in a relatable way.
+[Fu] addresses the problem of learning style transfer without the use of parallel corpora, using style embeddings (a previous work) and an auto-encoder model with multiple decoders. Attempts are made to improve evaluation metrics, but they do not appear to improve on human judgment and black-box classifiers. Example outputs from models are hard to visualize/express in a relatable way.
 \\ 
 
 [Hu] seeks to generate realistic (English) sentences using a VAE in a wake-sleep configuration. Semantic and stylistic signals can be injected to coerce specific meaning and styles.
 Outperforms stated previous work: a semi-supervised VAE [Kingma 2014]. Hu reaches about 83\% sentiment classification accuracy, although performance varies greatly with datasets used. Hu's metric is label accuracy using external (i.e. blackbox) sentiment classifiers.
 \\ 
 
-[Prabhumoye]'s proposed model creates a style-agnostic representation of an English input sentence using A->B then B->A neural machine translators, with the objective of style transfer with minimal semantic drift. A style-specific transformation step adds specific style to the style-agnostic representation. This paper confirms that BLEU and ROUGE metrics are not suitable for capturing meaning.
+[Prabhumoye]'s proposed model creates a style-agnostic representation of an English input sentence using A$\rightarrow$B then B$\rightarrow$A neural machine translators, with the objective of style transfer with minimal semantic drift. A style-specific transformation step adds specific style to style-agnostic precursor representation. This paper confirms that BLEU and ROUGE metrics are not suitable for capturing meaning.
 
 \section{Criticism of existing style transfer metrics}
 In this section we comment on existing metrics used to evaluate style transfer (or similar tasks).
+\\
 \begin{itemize}
   \item{ Perplexity and BLEU}
   \\
-  Perplexity, according to [Jurafsky] is the the normalized inverse probability of a test set, formalized as:
+  Perplexity, according to [Li, et al.] is the the normalized inverse probability of a test set, formalized as:
   \\
   \\
   $Perplexity(W) $ $=$ $\frac{1}{P(w_1 \ldots w_n)}^{\frac{1}{N}}$
@@ -109,18 +111,19 @@ In this section we comment on existing metrics used to evaluate style transfer (
   \\
   This metric is quite intuitive, simple, and portable. However, it suffers significant failures when evaluating across styles that use different words or word orderings. Consider this example inter-style sentence alignment:\\
   \\
-  (Reference) Mary ate her cheeseburger.\\
+  (Reference R) Mary ate her cheeseburger.\\
   (Candidate A) A meal was eaten by Mary.\\
   (Candidate B) Mary said that Bob ate his cheeseburger but I think she's lying.\\
   \\
-  Assume, reasonably, that (A) and (B) are both drawn from the same style corpus, and (C) is not: (A) and (B) are both concise and factual, while C uses indirect voice and a narrative effect.
-  \\
-  Candidate (B) will be heavily penalized because P(meal), P(was), P(A), and P(by) are all equal to zero.  The perplexity of (B) as compared with (A) will be high, since the metric accounts for specific words, not semantics or style. In contrast, perplexity will value (C)'s word overlap with (A), even though the overlapped words "ate" and "cheeseburger" are attached to different subjects.
+  Assume, reasonably, that (R) and (A) are both drawn from the same style corpus, and (B) is not: (R) and (A) are both concise and factual, while B uses indirect voice and a narrative effect.
   \\
   \\
-  For the same reasons, the BLEU score is incorrectly penalizes candidates that express the same style and concepts, but with different words. \\
+  Candidate (A) will be heavily penalized because P(meal), P(was), P(A), and P(by) are all equal to zero.  The perplexity of (A) with respect to (R) will be high, since the metric accounts for specific words, not semantics or style. In contrast, perplexity will value (B)'s word overlap with (R), even though the overlapped words "ate" and "cheeseburger" are attached to different subjects.
+  \\
+  \\
+  For the same reasons, the BLEU score incorrectly penalizes candidates that express the same style and concepts, but with different words. \\
 
-  \item{Neural Models}\\ As mentioned in Section 2, neural net classifiers are heavily used in sequence to sequence evaluation (including in style transfer), but they suffer poor explanatory power due to their composition of usually immense weight vectors that are not individually attached to human intelligable concepts. [Li, et al.] and others have attacked this problem with some success. However, achievements are still modest and tend to explain predictions row-by-row, rather than explaining the classifier as a whole. \\
+  \item{Neural Models}\\ As mentioned in Section II, neural net classifiers are heavily used in sequence to sequence evaluation (including in style transfer), but they suffer from poor explanatory power due to their composition of usually immense weight vectors that are not individually attached to human intelligable concepts. [Li, et al.] and others have attacked this problem with some success. However, achievements are still modest and tend to explain predictions row-by-row, rather than explaining the classifier as a whole. \\
 
   \item{Manual evaluation}\\
   Manual evaluation in theory provides great results, and indeed the majority of research in style transfer employs it so some degree. However, manual evaluation is obviously intractible for large amounts of training data. It is also subjective with respect to the human evaluators.
@@ -154,17 +157,15 @@ In this section we comment on existing metrics used to evaluate style transfer (
 \section{Experiment setup}
   
   \subsection{Data}
-  Experimental data was draw from Coco Xu's Shakespeare dataset. This dataset is drawn from two distinct sources: Shakespeare's original play scripts, and Sparknote's modernized versions. Sentences are aligned, so that the same sentence may be accessed simultaneously in both styles.
+  Experimental data was drawn from Coco Xu's Shakespeare dataset [Xu]. This dataset is drawn from two distinct sources: Shakespeare's original play scripts, and Sparknote's modernized versions. Sentences are aligned, so that the same sentence may be accessed simultaneously in both styles.
   All aligned sentences from the Shakespeare dataset were used, from the following plays:\\ \\ 'othello', 'antony-and-cleopatra', 'asyoulikeit', 
                        'errors', 'hamlet', 'henryv', 'juliuscaesar', 'lear', 'macbeth', 
                        'merchant', 'msnd', 'muchado', 'richardiii', 'romeojuliet', 
                        'shrew', 'tempest', 'twelfthnight'
 \\ \\
-  42,000 parallel sentences in total.
-\\
-  The topics encompass a wide variety of content and sentiment: comedies, tragedies, histories, although it is important to note that they are all written in the screenplay format. While this is an amazing corpus to work with, there are some natural limitations.
+There are 42,192 parallel sentences in total. The topics encompass a wide variety of content and sentiment: comedies, tragedies, and histories. It is important to note that they are all written in the screenplay format. While this is an amazing corpus to work with, there are some natural limitations.
 
-  Here are some examples of parallel aligned sentences. As you can see, differences in percieved style can vary significantly from passage to passage (original style on the left):
+  Here are some examples of parallel aligned sentences. As you can see, differences in perceived style can vary significantly from passage to passage (original style on the left):
 
 
   \begin{table}[h]
@@ -186,19 +187,18 @@ In this section we comment on existing metrics used to evaluate style transfer (
   \end{table}
 
 
-The original sentences were automatically assigned a "class 1" label, and the sparknotes sentences a "class 2" label, this generating a classical supervised learning dataset with "gold" labels.
+The original sentences were automatically assigned a "class 1" label, and the sparknotes sentences a "class 2" label, thus generating a classical supervised learning dataset with "gold" labels.
 
-This dataset was randomly shuffled by sentence pair, preserving style-to-style alignments. 70\% of corpus was designated the train set, 20\% the validation set, and 10\% the holdout test set.
+This dataset was randomly shuffled by sentence pair, preserving style-to-style alignments. 80\% of corpus was designated the train set, 10\% the validation set, and 10\% the holdout test set.
  
 We experimented with a variety of models. However, the choice of experiments was guided by our evaluator design ideals (see previous section).
 
 \subsection{Early Exploration - NER and BLEU}
-We attempted to use NER scores as well, but found that they provided almost no predictive power even between content-aligned inter-style sentence pairs. And of course, using NER in a non-aligned context reduces portability. Furthermore, even if NER could be configured to yield predictive power, it adds a distracting content signal into the evaluator, violating one of our ideal traits.
+We attempted to use Named Entity Recognition (NER) match scores as a subm-etric, but found that they provided almost no predictive power even between content-aligned inter-style sentence pairs. And of course, using NER in a non-aligned context reduces portability. Furthermore, even if NER could be configured to yield predictive power, it adds a distracting content signal into the evaluator, violating one of our ideal traits.
 \\ \\
+We wanted to employ BLEU scoring as a sub-metric. BLEU scores similar documents closer to "1", and dissimilar documents closer to "0". To crudely abstract content from style in the Shakespeare dataset, we aggregated BLEU scores on randomized sentence pairs in three experiments: pairs drawn from Style A, pairs drawn from Style B, and pairs drawn from Styles A and B.
 
-We wanted to employ BLEU scoring as a sub-metric. To crudely abstract content from style in the Shakespeare dataset, we aggregated BLEU scores on randomized sentence pairs in three experiments: pairs drawn from Style A, pairs drawn from Style B, and pairs drawn from Styles A and B.
-
-We hypothesized that if BLEU scores computed from same-style pairs were higher than inter-style, BLEU might differentiate between styles. Disappointingly, BLEU was not up to the task:
+We hypothesized that if BLEU scores computed from same-style pairs were better than inter-style, BLEU might differentiate between styles agnostic to content. Disappointingly, BLEU was not up to the task:
 
 \begin{table}[h]
   \caption{Content-agnostic BLEU scoring}
@@ -221,13 +221,13 @@ We hypothesized that if BLEU scores computed from same-style pairs were higher t
 \subsection{Feature Engineering}
 We used a total of of 1645 features in our final model, all human-intelligible.
 
-Drawing from insight from Strunk and White's "The Elements of Style", we tracked the counts of the following punctuation marks in each sentence of each style: 
+Drawing on insight from Strunk and White's "The Elements of Style", we tracked the counts of the following punctuation marks in each sentence of each style: 
 \\
 \\
  : ; ' ( ... !
 \\
 \\
-We constructed the remainder of the features from POS tagging and dependency parsing.
+We constructed the remainder of the features from POS tagging and dependency parsing artifacts.
 POS features were generated by the Spacy POS tagger, trained on a standard web corpus. We found the tagger to be quite accurate, even on the relatively ancient Shakespearean corpus. Example:\\
 \\
 "Go bid the priests do present sacrifice And bring me their opinions of success"\\
@@ -317,7 +317,7 @@ We reviewed linear classification models that had good classification ability as
   \\
   \\
   For SVM, test set accuracy hardly diverged from validation set accuracy. Thus, we are confident that overfitting is not a serious issue. We attribute the minimal differential to a large dataset and use of regularization within the SVM model.
-  \\ 
+ 
   \subsection{Error Analysis}
   While we initially trained and tuned both models on the entire dataset, we found that both test and validation accuracy peaked when using about 25\% of the dataset. Test (holdout) accuracy tracked validation accuracy very closely, again indicating that our ample training data minimized overfitting.
   \\
@@ -363,11 +363,15 @@ There are opportunities to extend this work in many different directions. We enu
   We assumed the "style-author" hypothesis: That any given author always writes in the same style. This is certainly not always the case - counterexamples are legion. An extension to the experimental setup would be to use unsupervised clustering techniques to identify stylistic drift within an author's oeuvre before using his/her data as training data. If stylistic drift is found to be common and significant, it may be necessary to programmatically differentiate multile styles within an oeuvre.\\
   \item 
   Related to the above extension, using a black box author intentification system as a submetric for the evaluator may boost evaluator performance.\\
-  \item Gain in evaluator perfomance may be found when using larger-than-sentence sequences. Most known work in style transfer occurs at the sentence level. Intuitively, stylistic signal should be attainable from larger sequences. For example, irony may only be detected in a sentence because of context from an earlier sentence.
+  \item Gains in evaluator perfomance may be found when using larger-than-sentence sequences. Most known work in style transfer occurs at the sentence level. Intuitively, stylistic signal should be attainable from larger sequences. For example, irony may only be detected in a sentence because of context from an earlier sentence.
 \end{itemize}
 
 \section{Conclusions}
-We hope that we have motivated the need for a better style transfer metric, and that our problem formalization will be helpful in future work. Unfortunately, our strategy of maximizing explanatory power through human-intelligible engineering features resulted in disappointing accuracy results in our best performing model, a Support Vector Machine classifier.
+We hope that we have motivated the need for a better style transfer metric, and that our problem formalization will be helpful in future work. This project also revealed that style evades rigorous rules and definition. Future work may benefit from defining "style" more technically and narrowly than the broad, colloquial definition assumed in this paper.
+\\ \\
+Unfortunately, our strategy of maximizing explanatory power through human-intelligible engineering features resulted in disappointing accuracy results in our best performing model, a Support Vector Machine classifier.
+\\
+\\ 
 
 
 
@@ -392,15 +396,27 @@ We hope that we have motivated the need for a better style transfer metric, and 
 \begin{thebibliography}{99}
 %\hyperref[label_name]{''link text''}
 
-\bibitem{c1} Understanding Neural Networks through Representation Erasure. Jiwei Li, Will Monroe and Dan Jurafsky. \url{https://arxiv.org/pdf/1612.08220.pdf}
-\bibitem{c1} Controlling Linguistic Style Aspects in Neural Language Generation. Jessica Ficler and Yoav Goldberg. \url{https://arxiv.org/pdf/1707.02633.pdf}
-\bibitem{c1} Style Transfer in Text: Exploration and Evalution. Fu, et al. \url{https://arxiv.org/abs/1711.06861}
-\bibitem{c1} Toward Controlled Generation of Text. Hu, et al. \url{https://arxiv.org/abs/1703.00955}
-\bibitem{c1} Overview of the Author Obfuscation Task at PAN 2018: A New Approach to Measuring Safety. Potthast, et al. \url{http://ceur-ws.org/Vol-2125/invited_paper_16.pdf}
-\bibitem{c1} Style Transfer Through Back-Translation. Prabhumoye, et al. \url{https://arxiv.org/abs/1804.09000}
-\bibitem{c1} Authorship Identification Using a Reduced Set of Linguistic Features. Ruseti, et al. \url{https://www.uni-weimar.de/medien/webis/events/pan-12/pan12-papers-final/pan12-author-identification/ruseti12-notebook.pdf}
-\bibitem{c1} Auto-Encoding Variational Bayes. Kingma, et al. \url{https://arxiv.org/abs/1312.6114}
-
+\bibitem{c1} [Li, et al.] Understanding Neural Networks through Representation Erasure. Jiwei Li, Will Monroe and Dan Jurafsky. \url{https://arxiv.org/pdf/1612.08220.pdf}
+\\
+\bibitem{c1} [Ficler] Controlling Linguistic Style Aspects in Neural Language Generation. Jessica Ficler and Yoav Goldberg. \url{https://arxiv.org/pdf/1707.02633.pdf}
+\\
+\bibitem{c1} [Fu] Style Transfer in Text: Exploration and Evalution. Fu, et al. \url{https://arxiv.org/abs/1711.06861}
+\\
+\bibitem{c1} [Hu] Toward Controlled Generation of Text. Hu, et al. \url{https://arxiv.org/abs/1703.00955}
+\\
+\bibitem{c1} [Potthast] Overview of the Author Obfuscation Task at PAN 2018: A New Approach to Measuring Safety. Potthast, et al. \url{http://ceur-ws.org/Vol-2125/invited_paper_16.pdf}
+\\
+\bibitem{c1} [Prabhumoye] Style Transfer Through Back-Translation. Prabhumoye, et al. \url{https://arxiv.org/abs/1804.09000}
+\\
+\bibitem{c1} [Ruseti] Authorship Identification Using a Reduced Set of Linguistic Features. Ruseti, et al. \url{https://www.uni-weimar.de/medien/webis/events/pan-12/pan12-papers-final/pan12-author-identification/ruseti12-notebook.pdf}
+\\
+\bibitem{c1} [Kingma 2014] Auto-Encoding Variational Bayes. Kingma, et al. \url{https://arxiv.org/abs/1312.6114}
+\\
+\bibitem{c1} [Houvardas] N-Gram Feature Selection for Authorship Identification. Houvardas. \url{http://www.icsd.aegean.gr/website_files/diplomatikes/msc/561623167.pdf}
+\\
+\bibitem{c1} [Xu] Paraphrasing for Style. Xu, Wei and Ritter, Alan and Dolan, Bill and Grishman, Ralph and Cherry, Colin. \url{http://www.aclweb.org/anthology/C12-1177}
+\\
+\bibitem{c1} The Elements of Style. William Strunk, Jr., and E.B. White. Allyn and Bacon (1999): Boston, United States.
 
 
 
